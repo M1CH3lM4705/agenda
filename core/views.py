@@ -30,9 +30,26 @@ def submit_login(request):
 def index(request):
     return redirect('/agenda/')
 
-def lista_eventos(request):
+def lista_eventos(request):#consulta de evento por usuario
 
     usuario = request.user
     evento = Evento.objects.filter(usuario=usuario  )
     dados = {'eventos':evento}
     return render(request, 'agenda.html', dados)
+
+@login_required(login_url='/login/')
+def evento(request):#Acesso a pagina evento
+    return render(request, 'evento.html')
+
+@login_required(login_url='/login/')#verifica se usuário está logado
+def submit_evento(request):#inserção de novo evento
+    if request.POST:
+        titulo = request.POST.get('titulo')
+        data_evento = request.POST.get('data_evento')
+        descricao = request.POST.get('descricao')
+        usuario = request.user
+        Evento.objects.create(titulo=titulo,
+                                data_evento=data_evento,
+                                descricao=descricao,
+                                usuario=usuario)
+    return redirect('/')
